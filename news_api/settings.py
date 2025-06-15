@@ -13,7 +13,8 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.environ.get('DEBUG', 'False').lower() == 'true'
+DEBUG = env('DEBUG', default='False').lower() == 'true'
+
 # This is a workaround for the issue with Render.com
 
 ALLOWED_HOSTS = ['*']  # for Render you can also put your domain here
@@ -69,8 +70,9 @@ WSGI_APPLICATION = 'news_api.wsgi.application'
 
 # ✅ Correct DATABASE
 DATABASES = {
-    'default': dj_database_url.parse('DATABASE_URL')
+    'default': dj_database_url.parse(env('DATABASE_URL'))
 }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
