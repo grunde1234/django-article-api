@@ -1,5 +1,6 @@
 from django.db import models
 from cloudinary_storage.storage import MediaCloudinaryStorage
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 class JournalistModel(models.Model):
@@ -22,7 +23,7 @@ class ArticleModel(models.Model):
     author = models.ForeignKey(JournalistModel, on_delete=models.CASCADE,related_name='Journalist')
     category_name = models.ForeignKey(CategoryModel, on_delete=models.CASCADE, related_name='cat')
     title = models.CharField(max_length=200)
-    image_select = models.ImageField()
+    image_select = CloudinaryField('image')
     description = models.TextField()
     published_on = models.DateField()
     location = models.CharField(max_length=200)
