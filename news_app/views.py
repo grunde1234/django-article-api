@@ -1,56 +1,43 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-""" from rest_framework.views import APIView """ # class based views
 from rest_framework import generics
+from rest_framework.parsers import MultiPartParser, FormParser
 from .models import *
 from .serializers import *
-from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
-# Create your views here.
-
+from rest_framework.pagination import LimitOffsetPagination
 
 # Category CRUD
-
 class CategoryView(generics.ListCreateAPIView):
     queryset = CategoryModel.objects.all()
     serializer_class = CategorySerializer
 
 # Journalist CRUD
-
 class JournalistView(generics.ListCreateAPIView):
     queryset = JournalistModel.objects.all()
     serializer_class = JournalistSerializer
 
-
 # Article CRUD
-
-# READ
 class ArticleViewAll(generics.ListAPIView):
     queryset = ArticleModel.objects.all()
     serializer_class = ArticleSerializer
-    pagination_class = LimitOffsetPagination  # or PageNumberPagination
-    pagination_class.page_size = 1  # Set default page size
+    pagination_class = LimitOffsetPagination
+    pagination_class.page_size = 1
 
-# CREATE
 class ArticleViewCreate(generics.ListCreateAPIView):
     queryset = ArticleModel.objects.all()
     serializer_class = ArticleSerializer
-
+    parser_classes = (MultiPartParser, FormParser)
 
 class ArticleViewDetail(generics.RetrieveAPIView):
     queryset = ArticleModel.objects.all()
     serializer_class = ArticleSerializer
     lookup_url_kwarg = 'Article_id'
-    
 
-# UPDATE
 class ArticleViewUpdate(generics.UpdateAPIView):
     queryset = ArticleModel.objects.all()
     serializer_class = ArticleSerializer
+    parser_classes = (MultiPartParser, FormParser)
 
-
-# DELETE
 class ArticleViewDelete(generics.DestroyAPIView):
     queryset = ArticleModel.objects.all()
     serializer_class = ArticleSerializer
-
-
