@@ -22,6 +22,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ArticleSerializer(serializers.ModelSerializer):
+    image_select = serializers.CharField()
     author_email = serializers.EmailField(write_only=True)
     author_email_display = serializers.EmailField(source='author.email', read_only=True)
 
