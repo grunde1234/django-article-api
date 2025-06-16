@@ -1,4 +1,5 @@
 from django.db import models
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 # Create your models here.
 class JournalistModel(models.Model):
@@ -21,7 +22,10 @@ class ArticleModel(models.Model):
     author = models.ForeignKey(JournalistModel, on_delete=models.CASCADE,related_name='Journalist')
     category_name = models.ForeignKey(CategoryModel, on_delete=models.CASCADE, related_name='cat')
     title = models.CharField(max_length=200)
-    image_select = models.ImageField(upload_to='images/')
+    image_select = models.ImageField(
+        storage=MediaCloudinaryStorage(),
+        upload_to='images/'
+    )
     description = models.TextField()
     published_on = models.DateField()
     location = models.CharField(max_length=200)
