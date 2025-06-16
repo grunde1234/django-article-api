@@ -8,7 +8,7 @@ class JournalistSerializer(serializers.ModelSerializer):
             UniqueValidator(queryset=JournalistModel.objects.all(), message="This user already exists")
         ]
     )
-    
+
     class Meta:
         model = JournalistModel
         fields = '__all__'
@@ -21,13 +21,14 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ArticleSerializer(serializers.ModelSerializer):
-    image_select = serializers.SerializerMethodField()  # This will handle Cloudinary URL
+    image_select = serializers.ImageField(required=False)  # ✅ Correct: no CharField anymore
 
     author_email = serializers.EmailField(write_only=True)
     author_email_display = serializers.EmailField(source='author.email', read_only=True)
 
     category_name = serializers.CharField(write_only=True)
-    category_name_display = serializers.CharField(source='category.cat_name', read_only=True)
+    category_name_display = serializers.CharField(source='category_name.cat_name', read_only=True)
+    # 🔑 Note: your ForeignKey field is called category_name, so use category_name.cat_name
 
     class Meta:
         model = ArticleModel
@@ -39,11 +40,6 @@ class ArticleSerializer(serializers.ModelSerializer):
             'category_name',
             'category_name_display',
         ]
-
-    def get_image_select(self, obj):
-        if obj.image_select:
-            return obj.image_select.url
-        return None
 
     def create(self, validated_data):
         author_email = validated_data.pop('author_email')
@@ -59,5 +55,18 @@ class ArticleSerializer(serializers.ModelSerializer):
         except CategoryModel.DoesNotExist:
             raise serializers.ValidationError({"category_name": f"No category found with name '{category_name}'."})
 
-        article = ArticleModel.objects.create(author=author, category_name=category, **validated_data)
+        article = ArticleModel.objects.create(
+            author=author,
+            category_name=category,
+            **validated_data
+        )
         return article
+
+    def to_representation(self, instance):
+        """ ✅ This ensures image URL is returned properly. """
+        representation = super().to_representation(instance)
+        if instance.image_select:
+            representation['image_select'] = instance.image_select.url
+        else:
+            representation['image_select'] = None
+        return representation
