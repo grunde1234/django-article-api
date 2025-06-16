@@ -27,6 +27,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     category_name = serializers.CharField(write_only=True)
     category_name_display = serializers.CharField(source='category.name', read_only=True)
+    image_select = serializers.CharField()  
 
     class Meta:
         model = ArticleModel
